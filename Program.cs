@@ -17,10 +17,12 @@ builder.Services.AddCors(options => {
     options.AddPolicy("PermitirFrontend", policy => {
         if (builder.Environment.IsDevelopment()) {
             policy.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
-        } else {
-            // URL de tu frontend en Vercel
+            // URL real de tu frontend en Vercel
             var allowedOrigins = builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>() 
-                ?? new[] { "https://inventario-app-pi.vercel.app" }; // Reemplaza con tu URL real
+                ?? new[] { 
+                    "https://inventario-app-pi.vercel.app", 
+                    "https://inventario-app-erwinplaza064s-projects.vercel.app" // Agregué el formato común de Vercel
+                };
             
             policy.WithOrigins(allowedOrigins)
                   .AllowAnyMethod()
