@@ -3,9 +3,25 @@ using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Priorizar la variable de entorno de Railway para la conexión
-var connectionString = Environment.GetEnvironmentVariable("MYSQL_URL") 
-                      ?? builder.Configuration.GetConnectionString("DefaultConnection");
+// Construir la cadena de conexión usando las variables individuales de Railway
+string connectionString;
+var mysqlHost = Environment.GetEnvironmentVariable("MYSQLHOST");
+
+if (!string.IsNullOrEmpty(mysqlHost))
+{
+    // Estamos en Railway, construimos manualmente
+    var mysqlPort = Environment.GetEnvironmentVariable("MYSQLPORT");
+    var mysqlUser = Environment.GetEnvironmentVariable("MYSQLUSER");
+    var mysqlPass = Environment.GetEnvironmentVariable("MYSQLPASSWORD");
+    var mysqlDb = Environment.GetEnvironmentVariable("MYSQLDATABASE");
+    
+    connectionString = $"Server={mysqlHost};Port={mysqlPort};User ID={mysqlUser};Password={mysqlPass};Database={mysqlDb};SSL Mode=Required;";
+}
+else
+{
+    // Estamos en local, usamos appsettings
+    connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? "";
+}
 
 builder.Services.AddDbContext<InventarioDbContext>(options =>
     options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
