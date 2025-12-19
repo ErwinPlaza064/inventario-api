@@ -37,7 +37,8 @@ builder.Services.AddCors(options => {
             var allowedOrigins = builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>() 
                 ?? new[] { 
                     "https://inventario-app-pi.vercel.app", 
-                    "https://inventario-app-erwinplaza064s-projects.vercel.app" // Agregué el formato común de Vercel
+                    "https://inventario-app-erwinplaza064s-projects.vercel.app",
+                    "https://inventario-app-amber.vercel.app" // Tu URL real de Vercel
                 };
             
             policy.WithOrigins(allowedOrigins)
