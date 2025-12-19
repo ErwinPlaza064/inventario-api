@@ -1,0 +1,33 @@
+namespace InventarioApi;
+
+public enum TaskStatus
+{
+    Pendiente,
+    EnProceso,
+    Completada
+}
+
+public class Tarea
+{
+    public int Id { get; set; }
+    public string Titulo { get; set; } = string.Empty;
+    public string? Descripcion { get; set; }
+    public TaskStatus Estado { get; set; } = TaskStatus.Pendiente;
+    public DateTime FechaCreacion { get; set; } = DateTime.UtcNow;
+}
+
+public class Nota
+{
+    public int Id { get; set; }
+    public string Titulo { get; set; } = string.Empty;
+    public string Contenido { get; set; } = string.Empty;
+    public DateTime FechaCreacion { get; set; } = DateTime.UtcNow;
+}
+
+public class Usuario
+{
+    public int Id { get; set; }
+    public string Username { get; set; } = string.Empty;
+    public string PasswordHash { get; set; } = string.Empty;
+    public string Rol { get; set; } = "User"; // Admin o User
+}

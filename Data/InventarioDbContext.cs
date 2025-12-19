@@ -9,30 +9,24 @@ public class InventarioDbContext : DbContext
     {
     }
 
-    public DbSet<Producto> Productos { get; set; }
+    public DbSet<Tarea> Tareas { get; set; }
+    public DbSet<Nota> Notas { get; set; }
+    public DbSet<Usuario> Usuarios { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<Producto>(entity =>
+        modelBuilder.Entity<Tarea>(entity =>
         {
-            entity.ToTable("productos");
-            
+            entity.ToTable("tareas");
             entity.HasKey(e => e.Id);
-            
-            entity.Property(e => e.Id)
-                .HasColumnName("id")
-                .ValueGeneratedOnAdd();
-            
-            entity.Property(e => e.Nombre)
-                .HasColumnName("nombre")
-                .HasMaxLength(255)
-                .IsRequired();
-            
-            entity.Property(e => e.Precio)
-                .HasColumnName("precio")
-                .HasColumnType("decimal(10,2)")
-                .IsRequired();
+            entity.Property(e => e.Titulo).IsRequired().HasMaxLength(255);
         });
 
+        modelBuilder.Entity<Nota>(entity =>
+        {
+            entity.ToTable("notas");
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Titulo).IsRequired().HasMaxLength(255);
+        });
     }
 }

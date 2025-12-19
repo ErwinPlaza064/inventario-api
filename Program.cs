@@ -1,6 +1,10 @@
 using InventarioApi.Data;
 using Microsoft.EntityFrameworkCore;
 
+using System.Text;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Construir la cadena de conexión usando las variables individuales de Railway
@@ -29,6 +33,26 @@ builder.Services.AddDbContext<InventarioDbContext>(options =>
 builder.Services.AddControllers(); 
 builder.Services.AddOpenApi();
 
+// --- CONFIGURACIÓN JWT ---
+var key = Encoding.ASCII.GetBytes("Tu_Clave_Secreta_Super_Larga_De_Seguridad_IT_123!");
+builder.Services.AddAuthentication(x =>
+{
+    x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+.AddJwtBearer(x =>
+{
+    x.RequireHttpsMetadata = false;
+    x.SaveToken = true;
+    x.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuerSigningKey = true,
+        IssuerSigningKey = new SymmetricSecurityKey(key),
+        ValidateIssuer = false,
+        ValidateAudience = false
+    };
+});
+
 builder.Services.AddCors(options => {
     options.AddPolicy("PermitirFrontend", policy => {
         policy.AllowAnyOrigin()
@@ -53,6 +77,10 @@ if (app.Environment.IsDevelopment()) {
 }
 
 app.UseCors("PermitirFrontend"); 
+
+app.UseAuthentication();
+app.UseAuthorization();
+
 app.MapControllers();
 
 app.Run();
