@@ -33,12 +33,13 @@ builder.Services.AddCors(options => {
     options.AddPolicy("PermitirFrontend", policy => {
         if (builder.Environment.IsDevelopment()) {
             policy.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
+        } else {
             // URL real de tu frontend en Vercel
             var allowedOrigins = builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>() 
                 ?? new[] { 
                     "https://inventario-app-pi.vercel.app", 
                     "https://inventario-app-erwinplaza064s-projects.vercel.app",
-                    "https://inventario-app-amber.vercel.app" // Tu URL real de Vercel
+                    "https://inventario-app-amber.vercel.app" 
                 };
             
             policy.WithOrigins(allowedOrigins)
