@@ -9,22 +9,22 @@ var mysqlHost = Environment.GetEnvironmentVariable("MYSQLHOST");
 
 if (!string.IsNullOrEmpty(mysqlHost))
 {
-    // Estamos en Railway, construimos manualmente
     var mysqlPort = Environment.GetEnvironmentVariable("MYSQLPORT");
     var mysqlUser = Environment.GetEnvironmentVariable("MYSQLUSER");
     var mysqlPass = Environment.GetEnvironmentVariable("MYSQLPASSWORD");
     var mysqlDb = Environment.GetEnvironmentVariable("MYSQLDATABASE");
     
-    connectionString = $"Server={mysqlHost};Port={mysqlPort};User ID={mysqlUser};Password={mysqlPass};Database={mysqlDb};SSL Mode=Required;";
+    // Simplificamos la cadena para evitar errores de SSL o formato
+    connectionString = $"Server={mysqlHost};Port={mysqlPort};User={mysqlUser};Password={mysqlPass};Database={mysqlDb};";
+    Console.WriteLine($"Conectando a base de datos en: {mysqlHost}");
 }
 else
 {
-    // Estamos en local, usamos appsettings
     connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? "";
 }
 
 builder.Services.AddDbContext<InventarioDbContext>(options =>
-    options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
+    options.UseMySql(connectionString, new MySqlServerVersion(new Version(8, 0, 33))));
 
 builder.Services.AddControllers(); 
 builder.Services.AddOpenApi();
