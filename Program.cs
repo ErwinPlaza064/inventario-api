@@ -94,6 +94,14 @@ using (var scope = app.Services.CreateScope()) {
                 Contenido TEXT,
                 FechaCreacion DATETIME NOT NULL,
                 UsuarioId INT NOT NULL DEFAULT 0
+            );",
+            @"CREATE TABLE IF NOT EXISTS Credenciales (
+                Id INT AUTO_INCREMENT PRIMARY KEY,
+                Titulo VARCHAR(255) NOT NULL,
+                Valor TEXT NOT NULL,
+                Usuario VARCHAR(255),
+                FechaCreacion DATETIME NOT NULL,
+                UsuarioId INT NOT NULL DEFAULT 0
             );"
         };
 

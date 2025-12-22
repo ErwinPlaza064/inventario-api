@@ -26,6 +26,16 @@ public class Nota
     public int UsuarioId { get; set; }
 }
 
+public class Credencial
+{
+    public int Id { get; set; }
+    public string Titulo { get; set; } = string.Empty; // Ej: "Router Planta Baja"
+    public string Valor { get; set; } = string.Empty;  // Ej: "admin123"
+    public string? Usuario { get; set; }              // Ej: "admin" (Opcional)
+    public DateTime FechaCreacion { get; set; } = DateTime.UtcNow;
+    public int UsuarioId { get; set; }
+}
+
 public class Usuario
 {
     public int Id { get; set; }

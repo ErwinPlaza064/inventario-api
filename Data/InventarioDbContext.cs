@@ -11,22 +11,31 @@ public class InventarioDbContext : DbContext
 
     public DbSet<Tarea> Tareas { get; set; }
     public DbSet<Nota> Notas { get; set; }
+    public DbSet<Credencial> Credenciales { get; set; }
     public DbSet<Usuario> Usuarios { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Tarea>(entity =>
         {
-            entity.ToTable("tareas");
+            entity.ToTable("Tareas");
             entity.HasKey(e => e.Id);
             entity.Property(e => e.Titulo).IsRequired().HasMaxLength(255);
         });
 
         modelBuilder.Entity<Nota>(entity =>
         {
-            entity.ToTable("notas");
+            entity.ToTable("Notas");
             entity.HasKey(e => e.Id);
             entity.Property(e => e.Titulo).IsRequired().HasMaxLength(255);
+        });
+
+        modelBuilder.Entity<Credencial>(entity =>
+        {
+            entity.ToTable("Credenciales");
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Titulo).IsRequired().HasMaxLength(255);
+            entity.Property(e => e.Valor).IsRequired();
         });
     }
 }
