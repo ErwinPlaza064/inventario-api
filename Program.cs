@@ -85,13 +85,15 @@ using (var scope = app.Services.CreateScope()) {
                 Titulo VARCHAR(255) NOT NULL,
                 Descripcion TEXT,
                 Estado INT NOT NULL,
-                FechaCreacion DATETIME NOT NULL
+                FechaCreacion DATETIME NOT NULL,
+                UsuarioId INT NOT NULL DEFAULT 0
             );",
             @"CREATE TABLE IF NOT EXISTS notas (
                 Id INT AUTO_INCREMENT PRIMARY KEY,
                 Titulo VARCHAR(255) NOT NULL,
                 Contenido TEXT,
-                FechaCreacion DATETIME NOT NULL
+                FechaCreacion DATETIME NOT NULL,
+                UsuarioId INT NOT NULL DEFAULT 0
             );"
         };
 
@@ -101,6 +103,22 @@ using (var scope = app.Services.CreateScope()) {
                 context.Database.ExecuteSqlRaw(sql);
             } catch (Exception ex) {
                 Console.WriteLine($"Error creando tabla: {ex.Message}");
+            }
+        }
+
+        // Migración simple: Intentar agregar columna UsuarioId si no existe
+        var migrations = new[] {
+            "ALTER TABLE tareas ADD COLUMN UsuarioId INT NOT NULL DEFAULT 0;",
+            "ALTER TABLE notas ADD COLUMN UsuarioId INT NOT NULL DEFAULT 0;"
+        };
+
+        foreach (var sql in migrations)
+        {
+            try {
+                // Esto fallará si la columna ya existe, lo cual es esperado/seguro en este contexto simple
+                context.Database.ExecuteSqlRaw(sql);
+            } catch {
+                // Ignorar error si la columna ya existe
             }
         }
         Console.WriteLine("Inicialización de DB completada.");

@@ -14,6 +14,7 @@ public class Tarea
     public string? Descripcion { get; set; }
     public TaskStatus Estado { get; set; } = TaskStatus.Pendiente;
     public DateTime FechaCreacion { get; set; } = DateTime.UtcNow;
+    public int UsuarioId { get; set; }
 }
 
 public class Nota
@@ -22,6 +23,7 @@ public class Nota
     public string Titulo { get; set; } = string.Empty;
     public string Contenido { get; set; } = string.Empty;
     public DateTime FechaCreacion { get; set; } = DateTime.UtcNow;
+    public int UsuarioId { get; set; }
 }
 
 public class Usuario

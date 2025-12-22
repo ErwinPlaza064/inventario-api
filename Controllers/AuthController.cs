@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -47,6 +48,32 @@ public class AuthController : ControllerBase
 
         var token = CreateToken(user);
         return Ok(new { token, username = user.Username });
+    }
+
+    [Authorize]
+    [HttpPut("profile")]
+    public async Task<ActionResult<Usuario>> UpdateProfile(UsuarioDto request)
+    {
+        var username = User.FindFirst(ClaimTypes.Name)?.Value;
+        var user = await _context.Usuarios.FirstOrDefaultAsync(u => u.Username == username);
+
+        if (user == null) return NotFound("Usuario no encontrado.");
+
+        if (!string.IsNullOrEmpty(request.Username) && request.Username != user.Username)
+        {
+            if (await _context.Usuarios.AnyAsync(u => u.Username == request.Username))
+                return BadRequest("El nombre de usuario ya está en uso.");
+            
+            user.Username = request.Username;
+        }
+
+        if (!string.IsNullOrEmpty(request.Password))
+        {
+            user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(request.Password);
+        }
+
+        await _context.SaveChangesAsync();
+        return Ok(new { username = user.Username });
     }
 
     private string CreateToken(Usuario user)

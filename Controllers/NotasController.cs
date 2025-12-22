@@ -4,6 +4,8 @@ using InventarioApi.Data;
 
 using Microsoft.AspNetCore.Authorization;
 
+using System.Security.Claims;
+
 namespace InventarioApi.Controllers;
 
 [Authorize]
@@ -18,15 +20,32 @@ public class NotasController : ControllerBase
         _context = context;
     }
 
+    private async Task<int> GetCurrentUserId()
+    {
+        var username = User.FindFirst(ClaimTypes.Name)?.Value;
+        if (string.IsNullOrEmpty(username)) return 0;
+        
+        var user = await _context.Usuarios.FirstOrDefaultAsync(u => u.Username == username);
+        return user?.Id ?? 0;
+    }
+
     [HttpGet]
     public async Task<ActionResult<IEnumerable<Nota>>> GetNotas()
     {
-        return await _context.Notas.OrderByDescending(n => n.FechaCreacion).ToListAsync();
+        var userId = await GetCurrentUserId();
+        return await _context.Notas
+            .Where(n => n.UsuarioId == userId)
+            .OrderByDescending(n => n.FechaCreacion)
+            .ToListAsync();
     }
 
     [HttpPost]
     public async Task<ActionResult<Nota>> PostNota(Nota nota)
     {
+        var userId = await GetCurrentUserId();
+        if (userId == 0) return Unauthorized();
+
+        nota.UsuarioId = userId;
         _context.Notas.Add(nota);
         await _context.SaveChangesAsync();
         return CreatedAtAction(nameof(GetNotas), new { id = nota.Id }, nota);
@@ -35,8 +54,12 @@ public class NotasController : ControllerBase
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteNota(int id)
     {
+        var userId = await GetCurrentUserId();
         var nota = await _context.Notas.FindAsync(id);
+        
         if (nota == null) return NotFound();
+        if (nota.UsuarioId != userId) return Forbid();
+
         _context.Notas.Remove(nota);
         await _context.SaveChangesAsync();
         return NoContent();
