@@ -51,7 +51,7 @@ public class AuthController : ControllerBase
     }
 
     [Authorize]
-    [HttpPut("profile")]
+    [HttpPost("profile")]
     public async Task<ActionResult<Usuario>> UpdateProfile(UsuarioDto request)
     {
         var username = User.FindFirst(ClaimTypes.Name)?.Value;

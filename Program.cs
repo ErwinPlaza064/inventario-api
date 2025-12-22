@@ -74,13 +74,13 @@ using (var scope = app.Services.CreateScope()) {
         
         // Ejecutar scripts individualmente para evitar errores en bloque
         var tables = new[] {
-            @"CREATE TABLE IF NOT EXISTS usuarios (
+            @"CREATE TABLE IF NOT EXISTS Usuarios (
                 Id INT AUTO_INCREMENT PRIMARY KEY,
                 Username VARCHAR(255) NOT NULL,
                 PasswordHash VARCHAR(500) NOT NULL,
                 Rol VARCHAR(50) DEFAULT 'User'
             );",
-            @"CREATE TABLE IF NOT EXISTS tareas (
+            @"CREATE TABLE IF NOT EXISTS Tareas (
                 Id INT AUTO_INCREMENT PRIMARY KEY,
                 Titulo VARCHAR(255) NOT NULL,
                 Descripcion TEXT,
@@ -88,7 +88,7 @@ using (var scope = app.Services.CreateScope()) {
                 FechaCreacion DATETIME NOT NULL,
                 UsuarioId INT NOT NULL DEFAULT 0
             );",
-            @"CREATE TABLE IF NOT EXISTS notas (
+            @"CREATE TABLE IF NOT EXISTS Notas (
                 Id INT AUTO_INCREMENT PRIMARY KEY,
                 Titulo VARCHAR(255) NOT NULL,
                 Contenido TEXT,
@@ -108,8 +108,8 @@ using (var scope = app.Services.CreateScope()) {
 
         // Migración simple: Intentar agregar columna UsuarioId si no existe
         var migrations = new[] {
-            "ALTER TABLE tareas ADD COLUMN UsuarioId INT NOT NULL DEFAULT 0;",
-            "ALTER TABLE notas ADD COLUMN UsuarioId INT NOT NULL DEFAULT 0;"
+            "ALTER TABLE Tareas ADD COLUMN UsuarioId INT NOT NULL DEFAULT 0;",
+            "ALTER TABLE Notas ADD COLUMN UsuarioId INT NOT NULL DEFAULT 0;"
         };
 
         foreach (var sql in migrations)
@@ -117,8 +117,9 @@ using (var scope = app.Services.CreateScope()) {
             try {
                 // Esto fallará si la columna ya existe, lo cual es esperado/seguro en este contexto simple
                 context.Database.ExecuteSqlRaw(sql);
-            } catch {
+            } catch (Exception ex) {
                 // Ignorar error si la columna ya existe
+                 Console.WriteLine($"Migración (probablemente ya aplicada): {ex.Message}");
             }
         }
         Console.WriteLine("Inicialización de DB completada.");
