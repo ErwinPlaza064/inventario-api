@@ -69,3 +69,14 @@ C:\Inventario-app\backend\obj\Debug\net10.0\refint\InventarioApi.dll
 C:\Inventario-app\backend\obj\Debug\net10.0\InventarioApi.pdb
 C:\Inventario-app\backend\obj\Debug\net10.0\InventarioApi.genruntimeconfig.cache
 C:\Inventario-app\backend\obj\Debug\net10.0\ref\InventarioApi.dll
+C:\Inventario-app\backend\bin\Debug\net10.0\appsettings.Production.json
+C:\Inventario-app\backend\bin\Debug\net10.0\BCrypt.Net-Next.dll
+C:\Inventario-app\backend\bin\Debug\net10.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll
+C:\Inventario-app\backend\bin\Debug\net10.0\Microsoft.IdentityModel.Abstractions.dll
+C:\Inventario-app\backend\bin\Debug\net10.0\Microsoft.IdentityModel.JsonWebTokens.dll
+C:\Inventario-app\backend\bin\Debug\net10.0\Microsoft.IdentityModel.Logging.dll
+C:\Inventario-app\backend\bin\Debug\net10.0\Microsoft.IdentityModel.Protocols.dll
+C:\Inventario-app\backend\bin\Debug\net10.0\Microsoft.IdentityModel.Protocols.OpenIdConnect.dll
+C:\Inventario-app\backend\bin\Debug\net10.0\Microsoft.IdentityModel.Tokens.dll
+C:\Inventario-app\backend\bin\Debug\net10.0\System.IdentityModel.Tokens.Jwt.dll
+C:\Inventario-app\backend\obj\Debug\net10.0\InventarioApi.sourcelink.json

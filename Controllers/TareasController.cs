@@ -18,7 +18,7 @@ public class TareasController : ControllerBase
         _context = context;
     }
 
-    [get]
+    [HttpGet]
     public async Task<ActionResult<IEnumerable<Tarea>>> GetTareas()
     {
         return await _context.Tareas.OrderByDescending(t => t.FechaCreacion).ToListAsync();
