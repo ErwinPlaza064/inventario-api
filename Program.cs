@@ -8,6 +8,9 @@ using Microsoft.IdentityModel.Tokens;
 var builder = WebApplication.CreateBuilder(args);
 
 // Construir la cadena de conexión usando las variables individuales de Railway
+// ... (imports remain the same)
+
+// Construir la cadena de conexión usando las variables individuales de Railway
 string connectionString;
 var mysqlHost = Environment.GetEnvironmentVariable("MYSQLHOST");
 
@@ -18,8 +21,8 @@ if (!string.IsNullOrEmpty(mysqlHost))
     var mysqlPass = Environment.GetEnvironmentVariable("MYSQLPASSWORD");
     var mysqlDb = Environment.GetEnvironmentVariable("MYSQLDATABASE");
     
-    // Simplificamos la cadena para evitar errores de SSL o formato
-    connectionString = $"Server={mysqlHost};Port={mysqlPort};User={mysqlUser};Password={mysqlPass};Database={mysqlDb};";
+    // Simplificamos la cadena y aseguramos CharSet
+    connectionString = $"Server={mysqlHost};Port={mysqlPort};User={mysqlUser};Password={mysqlPass};Database={mysqlDb};CharSet=utf8mb4;";
     Console.WriteLine($"Conectando a base de datos en: {mysqlHost}");
 }
 else
@@ -66,9 +69,36 @@ var app = builder.Build();
 using (var scope = app.Services.CreateScope()) {
     try {
         var context = scope.ServiceProvider.GetRequiredService<InventarioDbContext>();
+        // Intentar crear base de datos si no existe
         context.Database.EnsureCreated();
+        
+        // FORZAR CREACIÓN DE TABLAS SI NO EXISTEN (Parche para Railway sin migraciones)
+        var sql = @"
+            CREATE TABLE IF NOT EXISTS Usuarios (
+                Id INT AUTO_INCREMENT PRIMARY KEY,
+                Username VARCHAR(255) NOT NULL,
+                PasswordHash VARCHAR(500) NOT NULL,
+                Rol VARCHAR(50) DEFAULT 'User'
+            );
+            CREATE TABLE IF NOT EXISTS Tareas (
+                Id INT AUTO_INCREMENT PRIMARY KEY,
+                Titulo VARCHAR(255) NOT NULL,
+                Descripcion TEXT,
+                Estado INT NOT NULL,
+                FechaCreacion DATETIME NOT NULL
+            );
+            CREATE TABLE IF NOT EXISTS Notas (
+                Id INT AUTO_INCREMENT PRIMARY KEY,
+                Titulo VARCHAR(255) NOT NULL,
+                Contenido TEXT,
+                FechaCreacion DATETIME NOT NULL
+            );
+        ";
+        context.Database.ExecuteSqlRaw(sql);
+        Console.WriteLine("Tablas verificadas/creadas correctamente.");
+
     } catch (Exception ex) {
-        Console.WriteLine($"Error al inicializar la BD: {ex.Message}");
+        Console.WriteLine($"Error al inicializar la BD: {ex.ToString()}");
     }
 }
 
