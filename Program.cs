@@ -66,6 +66,7 @@ builder.Services.AddCors(options => {
 
 var app = builder.Build(); 
 
+using (var scope = app.Services.CreateScope()) {
     try {
         var context = scope.ServiceProvider.GetRequiredService<InventarioDbContext>();
         // Intentar crear base de datos si no existe
