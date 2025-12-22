@@ -66,36 +66,43 @@ builder.Services.AddCors(options => {
 
 var app = builder.Build(); 
 
-using (var scope = app.Services.CreateScope()) {
     try {
         var context = scope.ServiceProvider.GetRequiredService<InventarioDbContext>();
         // Intentar crear base de datos si no existe
         context.Database.EnsureCreated();
         
-        // FORZAR CREACIÓN DE TABLAS SI NO EXISTEN (Parche para Railway sin migraciones)
-        var sql = @"
-            CREATE TABLE IF NOT EXISTS Usuarios (
+        // Ejecutar scripts individualmente para evitar errores en bloque
+        var tables = new[] {
+            @"CREATE TABLE IF NOT EXISTS usuarios (
                 Id INT AUTO_INCREMENT PRIMARY KEY,
                 Username VARCHAR(255) NOT NULL,
                 PasswordHash VARCHAR(500) NOT NULL,
                 Rol VARCHAR(50) DEFAULT 'User'
-            );
-            CREATE TABLE IF NOT EXISTS Tareas (
+            );",
+            @"CREATE TABLE IF NOT EXISTS tareas (
                 Id INT AUTO_INCREMENT PRIMARY KEY,
                 Titulo VARCHAR(255) NOT NULL,
                 Descripcion TEXT,
                 Estado INT NOT NULL,
                 FechaCreacion DATETIME NOT NULL
-            );
-            CREATE TABLE IF NOT EXISTS Notas (
+            );",
+            @"CREATE TABLE IF NOT EXISTS notas (
                 Id INT AUTO_INCREMENT PRIMARY KEY,
                 Titulo VARCHAR(255) NOT NULL,
                 Contenido TEXT,
                 FechaCreacion DATETIME NOT NULL
-            );
-        ";
-        context.Database.ExecuteSqlRaw(sql);
-        Console.WriteLine("Tablas verificadas/creadas correctamente.");
+            );"
+        };
+
+        foreach (var sql in tables)
+        {
+            try {
+                context.Database.ExecuteSqlRaw(sql);
+            } catch (Exception ex) {
+                Console.WriteLine($"Error creando tabla: {ex.Message}");
+            }
+        }
+        Console.WriteLine("Inicialización de DB completada.");
 
     } catch (Exception ex) {
         Console.WriteLine($"Error al inicializar la BD: {ex.ToString()}");
