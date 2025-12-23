@@ -124,6 +124,42 @@ public class CredencialesController : ControllerBase
         return CreatedAtAction(nameof(GetCredenciales), new { id = credencial.Id }, credencial);
     }
 
+    [HttpPut("{id}")]
+    public async Task<IActionResult> PutCredencial(int id, Credencial credencial)
+    {
+        if (id != credencial.Id) return BadRequest();
+        
+        var userId = await GetCurrentUserId();
+        var existingCredencial = await _context.Credenciales.FindAsync(id);
+        
+        if (existingCredencial == null) return NotFound();
+        if (existingCredencial.UsuarioId != userId) return Forbid();
+        
+        // Update fields
+        existingCredencial.Titulo = credencial.Titulo;
+        existingCredencial.Valor = Encrypt(credencial.Valor);
+        existingCredencial.Usuario = credencial.Usuario;
+        existingCredencial.Categoria = credencial.Categoria;
+        
+        try
+        {
+            await _context.SaveChangesAsync();
+        }
+        catch (DbUpdateConcurrencyException)
+        {
+            if (!CredencialExists(id))
+                return NotFound();
+            throw;
+        }
+        
+        return NoContent();
+    }
+
+    private bool CredencialExists(int id)
+    {
+        return _context.Credenciales.Any(e => e.Id == id);
+    }
+
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteCredencial(int id)
     {
