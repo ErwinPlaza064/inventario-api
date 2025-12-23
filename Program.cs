@@ -100,6 +100,7 @@ using (var scope = app.Services.CreateScope()) {
                 Titulo VARCHAR(255) NOT NULL,
                 Valor TEXT NOT NULL,
                 Usuario VARCHAR(255),
+                Categoria VARCHAR(100),
                 FechaCreacion DATETIME NOT NULL,
                 UsuarioId INT NOT NULL DEFAULT 0
             );"
@@ -118,7 +119,8 @@ using (var scope = app.Services.CreateScope()) {
         var migrations = new[] {
             "ALTER TABLE Tareas ADD COLUMN UsuarioId INT NOT NULL DEFAULT 0;",
             "ALTER TABLE Notas ADD COLUMN UsuarioId INT NOT NULL DEFAULT 0;",
-            "ALTER TABLE Tareas ADD COLUMN Categoria INT NOT NULL DEFAULT 0;"
+            "ALTER TABLE Tareas ADD COLUMN Categoria INT NOT NULL DEFAULT 0;",
+            "ALTER TABLE Credenciales ADD COLUMN Categoria VARCHAR(100);"
         };
 
         foreach (var sql in migrations)
