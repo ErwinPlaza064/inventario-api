@@ -13,6 +13,7 @@ public class InventarioDbContext : DbContext
     public DbSet<Nota> Notas { get; set; }
     public DbSet<Credencial> Credenciales { get; set; }
     public DbSet<Usuario> Usuarios { get; set; }
+    public DbSet<Comentario> Comentarios { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -36,6 +37,13 @@ public class InventarioDbContext : DbContext
             entity.HasKey(e => e.Id);
             entity.Property(e => e.Titulo).IsRequired().HasMaxLength(255);
             entity.Property(e => e.Valor).IsRequired();
+        });
+
+        modelBuilder.Entity<Comentario>(entity =>
+        {
+            entity.ToTable("Comentarios");
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Contenido).IsRequired();
         });
     }
 }

@@ -51,6 +51,24 @@ public class NotasController : ControllerBase
         return CreatedAtAction(nameof(GetNotas), new { id = nota.Id }, nota);
     }
 
+    [HttpPut("{id}")]
+    public async Task<IActionResult> PutNota(int id, Nota nota)
+    {
+        if (id != nota.Id) return BadRequest();
+
+        var userId = await GetCurrentUserId();
+        var existingNota = await _context.Notas.FindAsync(id);
+
+        if (existingNota == null) return NotFound();
+        if (existingNota.UsuarioId != userId) return Forbid();
+
+        existingNota.Titulo = nota.Titulo;
+        existingNota.Contenido = nota.Contenido;
+
+        await _context.SaveChangesAsync();
+        return NoContent();
+    }
+
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteNota(int id)
     {

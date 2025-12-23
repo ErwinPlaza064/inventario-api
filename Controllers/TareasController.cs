@@ -91,4 +91,59 @@ public class TareasController : ControllerBase
         await _context.SaveChangesAsync();
         return NoContent();
     }
+
+    // --- Bitácora (Comentarios) ---
+
+    [HttpGet("{id}/comentarios")]
+    public async Task<ActionResult<IEnumerable<Comentario>>> GetComentarios(int id)
+    {
+        var userId = await GetCurrentUserId();
+        var tarea = await _context.Tareas.FindAsync(id);
+        if (tarea == null) return NotFound();
+        if (tarea.UsuarioId != userId) return Forbid();
+
+        return await _context.Comentarios
+            .Where(c => c.TareaId == id)
+            .OrderByDescending(c => c.FechaCreacion)
+            .ToListAsync();
+    }
+
+    [HttpPost("{id}/comentarios")]
+    public async Task<ActionResult<Comentario>> PostComentario(int id, Comentario comentario)
+    {
+        var userId = await GetCurrentUserId();
+        var tarea = await _context.Tareas.FindAsync(id);
+        if (tarea == null) return NotFound();
+        if (tarea.UsuarioId != userId) return Forbid();
+
+        comentario.TareaId = id;
+        comentario.UsuarioId = userId;
+        comentario.FechaCreacion = DateTime.UtcNow;
+
+        _context.Comentarios.Add(comentario);
+        await _context.SaveChangesAsync();
+
+        return Ok(comentario);
+    }
+
+    [HttpGet("novedades")]
+    public async Task<ActionResult<IEnumerable<object>>> GetNovedades()
+    {
+        var userId = await GetCurrentUserId();
+        
+        // Obtenemos los últimos 20 comentarios de tareas que pertenecen al usuario
+        var novedades = await _context.Comentarios
+            .Where(c => c.UsuarioId == userId)
+            .OrderByDescending(c => c.FechaCreacion)
+            .Take(20)
+            .Select(c => new {
+                c.Id,
+                c.Contenido,
+                c.FechaCreacion,
+                TareaTitulo = _context.Tareas.Where(t => t.Id == c.TareaId).Select(t => t.Titulo).FirstOrDefault()
+            })
+            .ToListAsync();
+
+        return Ok(novedades);
+    }
 }
