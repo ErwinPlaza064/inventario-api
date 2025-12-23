@@ -71,6 +71,7 @@ public class TareasController : ControllerBase
         existingTask.Titulo = tarea.Titulo;
         existingTask.Descripcion = tarea.Descripcion;
         existingTask.Estado = tarea.Estado;
+        existingTask.Categoria = tarea.Categoria;
         // Do not update UsuarioId or FechaCreacion usually
         
         await _context.SaveChangesAsync();

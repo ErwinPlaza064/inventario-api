@@ -117,7 +117,8 @@ using (var scope = app.Services.CreateScope()) {
         // Migración simple: Intentar agregar columna UsuarioId si no existe
         var migrations = new[] {
             "ALTER TABLE Tareas ADD COLUMN UsuarioId INT NOT NULL DEFAULT 0;",
-            "ALTER TABLE Notas ADD COLUMN UsuarioId INT NOT NULL DEFAULT 0;"
+            "ALTER TABLE Notas ADD COLUMN UsuarioId INT NOT NULL DEFAULT 0;",
+            "ALTER TABLE Tareas ADD COLUMN Categoria INT NOT NULL DEFAULT 0;"
         };
 
         foreach (var sql in migrations)

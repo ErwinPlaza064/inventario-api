@@ -7,12 +7,22 @@ public enum TaskStatus
     Completada
 }
 
+public enum TaskCategory
+{
+    Hardware,
+    Software,
+    Redes,
+    Documentacion,
+    Mantenimiento
+}
+
 public class Tarea
 {
     public int Id { get; set; }
     public string Titulo { get; set; } = string.Empty;
     public string? Descripcion { get; set; }
     public TaskStatus Estado { get; set; } = TaskStatus.Pendiente;
+    public TaskCategory? Categoria { get; set; } = TaskCategory.Hardware;
     public DateTime FechaCreacion { get; set; } = DateTime.UtcNow;
     public int UsuarioId { get; set; }
 }
