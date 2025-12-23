@@ -42,6 +42,7 @@ public class Credencial
     public string Titulo { get; set; } = string.Empty; // Ej: "Router Planta Baja"
     public string Valor { get; set; } = string.Empty;  // Ej: "admin123"
     public string? Usuario { get; set; }              // Ej: "admin" (Opcional)
+    public string? Categoria { get; set; }            // Ej: "General", "WiFi", etc.
     public DateTime FechaCreacion { get; set; } = DateTime.UtcNow;
     public int UsuarioId { get; set; }
 }
