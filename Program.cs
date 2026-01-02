@@ -136,8 +136,10 @@ using (var scope = app.Services.CreateScope()) {
             "ALTER TABLE Tareas ADD COLUMN UsuarioId INT NOT NULL DEFAULT 0;",
             "ALTER TABLE Notas ADD COLUMN UsuarioId INT NOT NULL DEFAULT 0;",
             "ALTER TABLE Tareas ADD COLUMN Categoria INT NOT NULL DEFAULT 0;",
+            "ALTER TABLE Notas ADD COLUMN Categoria INT NOT NULL DEFAULT 0;",
             "ALTER TABLE Credenciales ADD COLUMN Categoria VARCHAR(100);",
             "ALTER TABLE Tareas ADD COLUMN Prioridad INT NOT NULL DEFAULT 1;",
+            "ALTER TABLE Notas ADD COLUMN Prioridad INT NOT NULL DEFAULT 1;",
             "ALTER TABLE Tareas ADD COLUMN FechaVencimiento DATETIME;"
         };
 

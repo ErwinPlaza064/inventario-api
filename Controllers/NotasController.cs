@@ -76,6 +76,8 @@ public class NotasController : ControllerBase
 
         existingNota.Titulo = nota.Titulo;
         existingNota.Contenido = nota.Contenido;
+        existingNota.Prioridad = nota.Prioridad;
+        existingNota.Categoria = nota.Categoria;
 
         await _context.SaveChangesAsync();
 

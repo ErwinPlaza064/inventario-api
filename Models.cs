@@ -42,6 +42,8 @@ public class Nota
     public int Id { get; set; }
     public string Titulo { get; set; } = string.Empty;
     public string Contenido { get; set; } = string.Empty;
+    public TaskPriority Prioridad { get; set; } = TaskPriority.Media;
+    public TaskCategory Categoria { get; set; } = TaskCategory.Documentacion;
     public DateTime FechaCreacion { get; set; } = DateTime.UtcNow;
     public int UsuarioId { get; set; }
 }
