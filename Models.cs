@@ -16,6 +16,14 @@ public enum TaskCategory
     Mantenimiento
 }
 
+public enum TaskPriority
+{
+    Baja,
+    Media,
+    Alta,
+    Urgente
+}
+
 public class Tarea
 {
     public int Id { get; set; }
@@ -23,6 +31,8 @@ public class Tarea
     public string? Descripcion { get; set; }
     public TaskStatus Estado { get; set; } = TaskStatus.Pendiente;
     public TaskCategory? Categoria { get; set; } = TaskCategory.Hardware;
+    public TaskPriority Prioridad { get; set; } = TaskPriority.Media;
+    public DateTime? FechaVencimiento { get; set; }
     public DateTime FechaCreacion { get; set; } = DateTime.UtcNow;
     public int UsuarioId { get; set; }
 }
@@ -60,6 +70,31 @@ public class Comentario
     public int Id { get; set; }
     public int TareaId { get; set; }
     public string Contenido { get; set; } = string.Empty;
+    public DateTime FechaCreacion { get; set; } = DateTime.UtcNow;
+    public int UsuarioId { get; set; }
+}
+
+public enum TipoActividad
+{
+    TareaCreada,
+    TareaActualizada,
+    TareaCompletada,
+    TareaEliminada,
+    ComentarioAgregado,
+    NotaCreada,
+    NotaActualizada,
+    NotaEliminada,
+    CredencialCreada,
+    CredencialEliminada
+}
+
+public class Actividad
+{
+    public int Id { get; set; }
+    public TipoActividad Tipo { get; set; }
+    public string Descripcion { get; set; } = string.Empty;
+    public int? ReferenciaId { get; set; }  // ID del objeto relacionado (tarea, nota, etc)
+    public string? ReferenciaInfo { get; set; }  // Info adicional (título, categoría, etc)
     public DateTime FechaCreacion { get; set; } = DateTime.UtcNow;
     public int UsuarioId { get; set; }
 }

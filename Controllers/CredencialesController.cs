@@ -113,12 +113,18 @@ public class CredencialesController : ControllerBase
         _context.Credenciales.Add(credencial);
         await _context.SaveChangesAsync();
         
-        // Return decrypted logic (or encrypted? usually API returns what was saved, but for UI feedback decrypt might be nicer)
-        // For consistency let's return it as saved (encrypted) or decrypt it?
-        // Let's decrypt it so UI updates instantly with correct value, OR trust UI optimistic update.
-        // Actually, "UpdatedAtAction" returns the object. Let's make sure it's usable.
-        // But if I change it back to Decrypt here, does it affect EF tracking? 
-        // Best: Detach or just update property since it's already saved.
+        // Registrar actividad
+        var actividad = new Actividad
+        {
+            Tipo = TipoActividad.CredencialCreada,
+            Descripcion = $"Credencial creada: {credencial.Titulo}",
+            ReferenciaId = credencial.Id,
+            ReferenciaInfo = credencial.Categoria,
+            UsuarioId = userId
+        };
+        _context.Actividades.Add(actividad);
+        await _context.SaveChangesAsync();
+        
         credencial.Valor = Decrypt(credencial.Valor); 
         
         return CreatedAtAction(nameof(GetCredenciales), new { id = credencial.Id }, credencial);
@@ -169,8 +175,23 @@ public class CredencialesController : ControllerBase
         if (credencial == null) return NotFound();
         if (credencial.UsuarioId != userId) return Forbid();
 
+        var titulo = credencial.Titulo;
+        var categoria = credencial.Categoria;
+
         _context.Credenciales.Remove(credencial);
         await _context.SaveChangesAsync();
+
+        // Registrar actividad
+        var actividad = new Actividad
+        {
+            Tipo = TipoActividad.CredencialEliminada,
+            Descripcion = $"Credencial eliminada: {titulo}",
+            ReferenciaInfo = categoria,
+            UsuarioId = userId
+        };
+        _context.Actividades.Add(actividad);
+        await _context.SaveChangesAsync();
+
         return NoContent();
     }
 }

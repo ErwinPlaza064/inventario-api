@@ -48,6 +48,18 @@ public class NotasController : ControllerBase
         nota.UsuarioId = userId;
         _context.Notas.Add(nota);
         await _context.SaveChangesAsync();
+
+        // Registrar actividad
+        var actividad = new Actividad
+        {
+            Tipo = TipoActividad.NotaCreada,
+            Descripcion = $"Nota creada: {nota.Titulo}",
+            ReferenciaId = nota.Id,
+            UsuarioId = userId
+        };
+        _context.Actividades.Add(actividad);
+        await _context.SaveChangesAsync();
+
         return CreatedAtAction(nameof(GetNotas), new { id = nota.Id }, nota);
     }
 
@@ -66,6 +78,18 @@ public class NotasController : ControllerBase
         existingNota.Contenido = nota.Contenido;
 
         await _context.SaveChangesAsync();
+
+        // Registrar actividad
+        var actividad = new Actividad
+        {
+            Tipo = TipoActividad.NotaActualizada,
+            Descripcion = $"Nota actualizada: {nota.Titulo}",
+            ReferenciaId = nota.Id,
+            UsuarioId = userId
+        };
+        _context.Actividades.Add(actividad);
+        await _context.SaveChangesAsync();
+
         return NoContent();
     }
 
@@ -78,8 +102,21 @@ public class NotasController : ControllerBase
         if (nota == null) return NotFound();
         if (nota.UsuarioId != userId) return Forbid();
 
+        var titulo = nota.Titulo;
+
         _context.Notas.Remove(nota);
         await _context.SaveChangesAsync();
+
+        // Registrar actividad
+        var actividad = new Actividad
+        {
+            Tipo = TipoActividad.NotaEliminada,
+            Descripcion = $"Nota eliminada: {titulo}",
+            UsuarioId = userId
+        };
+        _context.Actividades.Add(actividad);
+        await _context.SaveChangesAsync();
+
         return NoContent();
     }
 }

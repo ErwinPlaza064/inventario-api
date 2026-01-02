@@ -103,6 +103,22 @@ using (var scope = app.Services.CreateScope()) {
                 Categoria VARCHAR(100),
                 FechaCreacion DATETIME NOT NULL,
                 UsuarioId INT NOT NULL DEFAULT 0
+            );",
+            @"CREATE TABLE IF NOT EXISTS Actividades (
+                Id INT AUTO_INCREMENT PRIMARY KEY,
+                Tipo INT NOT NULL,
+                Descripcion VARCHAR(500) NOT NULL,
+                ReferenciaId INT,
+                ReferenciaInfo VARCHAR(255),
+                FechaCreacion DATETIME NOT NULL,
+                UsuarioId INT NOT NULL
+            );",
+            @"CREATE TABLE IF NOT EXISTS Comentarios (
+                Id INT AUTO_INCREMENT PRIMARY KEY,
+                TareaId INT NOT NULL,
+                Contenido TEXT NOT NULL,
+                FechaCreacion DATETIME NOT NULL,
+                UsuarioId INT NOT NULL
             );"
         };
 
@@ -120,7 +136,9 @@ using (var scope = app.Services.CreateScope()) {
             "ALTER TABLE Tareas ADD COLUMN UsuarioId INT NOT NULL DEFAULT 0;",
             "ALTER TABLE Notas ADD COLUMN UsuarioId INT NOT NULL DEFAULT 0;",
             "ALTER TABLE Tareas ADD COLUMN Categoria INT NOT NULL DEFAULT 0;",
-            "ALTER TABLE Credenciales ADD COLUMN Categoria VARCHAR(100);"
+            "ALTER TABLE Credenciales ADD COLUMN Categoria VARCHAR(100);",
+            "ALTER TABLE Tareas ADD COLUMN Prioridad INT NOT NULL DEFAULT 1;",
+            "ALTER TABLE Tareas ADD COLUMN FechaVencimiento DATETIME;"
         };
 
         foreach (var sql in migrations)

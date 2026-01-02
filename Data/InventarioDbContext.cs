@@ -14,6 +14,7 @@ public class InventarioDbContext : DbContext
     public DbSet<Credencial> Credenciales { get; set; }
     public DbSet<Usuario> Usuarios { get; set; }
     public DbSet<Comentario> Comentarios { get; set; }
+    public DbSet<Actividad> Actividades { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -44,6 +45,13 @@ public class InventarioDbContext : DbContext
             entity.ToTable("Comentarios");
             entity.HasKey(e => e.Id);
             entity.Property(e => e.Contenido).IsRequired();
+        });
+
+        modelBuilder.Entity<Actividad>(entity =>
+        {
+            entity.ToTable("Actividades");
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Descripcion).IsRequired().HasMaxLength(500);
         });
     }
 }

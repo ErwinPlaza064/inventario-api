@@ -48,6 +48,19 @@ public class TareasController : ControllerBase
         tarea.UsuarioId = userId;
         _context.Tareas.Add(tarea);
         await _context.SaveChangesAsync();
+
+        // Registrar actividad
+        var actividad = new Actividad
+        {
+            Tipo = TipoActividad.TareaCreada,
+            Descripcion = $"Tarea creada: {tarea.Titulo}",
+            ReferenciaId = tarea.Id,
+            ReferenciaInfo = tarea.Categoria?.ToString(),
+            UsuarioId = userId
+        };
+        _context.Actividades.Add(actividad);
+        await _context.SaveChangesAsync();
+
         return CreatedAtAction(nameof(GetTareas), new { id = tarea.Id }, tarea);
     }
 
@@ -62,19 +75,36 @@ public class TareasController : ControllerBase
         if (existingTask == null) return NotFound();
         if (existingTask.UsuarioId != userId) return Forbid();
 
-        // Preserve ownership and creation date logic if needed, or just update fields
-        // Safer to just update allowed fields or attach. 
-        // For now, simpler: check ownership, then update.
-        // But since we are replacing the object in EF (Entry.State = Modified), we must ensure UsuarioId isn't overwritten or check it.
+        var estadoAnterior = existingTask.Estado;
         
-        // Better pattern for update:
         existingTask.Titulo = tarea.Titulo;
         existingTask.Descripcion = tarea.Descripcion;
         existingTask.Estado = tarea.Estado;
         existingTask.Categoria = tarea.Categoria;
-        // Do not update UsuarioId or FechaCreacion usually
         
         await _context.SaveChangesAsync();
+
+        // Registrar actividad
+        TipoActividad tipoActividad = TipoActividad.TareaActualizada;
+        string descripcion = $"Tarea actualizada: {tarea.Titulo}";
+
+        if (estadoAnterior != tarea.Estado && tarea.Estado == TaskStatus.Completada)
+        {
+            tipoActividad = TipoActividad.TareaCompletada;
+            descripcion = $"Tarea completada: {tarea.Titulo}";
+        }
+
+        var actividad = new Actividad
+        {
+            Tipo = tipoActividad,
+            Descripcion = descripcion,
+            ReferenciaId = tarea.Id,
+            ReferenciaInfo = tarea.Categoria?.ToString(),
+            UsuarioId = userId
+        };
+        _context.Actividades.Add(actividad);
+        await _context.SaveChangesAsync();
+
         return NoContent();
     }
 
@@ -87,8 +117,23 @@ public class TareasController : ControllerBase
         if (tarea == null) return NotFound();
         if (tarea.UsuarioId != userId) return Forbid();
 
+        var titulo = tarea.Titulo;
+        var categoria = tarea.Categoria?.ToString();
+
         _context.Tareas.Remove(tarea);
         await _context.SaveChangesAsync();
+
+        // Registrar actividad
+        var actividad = new Actividad
+        {
+            Tipo = TipoActividad.TareaEliminada,
+            Descripcion = $"Tarea eliminada: {titulo}",
+            ReferenciaInfo = categoria,
+            UsuarioId = userId
+        };
+        _context.Actividades.Add(actividad);
+        await _context.SaveChangesAsync();
+
         return NoContent();
     }
 
@@ -121,6 +166,18 @@ public class TareasController : ControllerBase
         comentario.FechaCreacion = DateTime.UtcNow;
 
         _context.Comentarios.Add(comentario);
+        await _context.SaveChangesAsync();
+
+        // Registrar actividad
+        var actividad = new Actividad
+        {
+            Tipo = TipoActividad.ComentarioAgregado,
+            Descripcion = $"Comentario en: {tarea.Titulo}",
+            ReferenciaId = tarea.Id,
+            ReferenciaInfo = comentario.Contenido.Length > 50 ? comentario.Contenido.Substring(0, 50) + "..." : comentario.Contenido,
+            UsuarioId = userId
+        };
+        _context.Actividades.Add(actividad);
         await _context.SaveChangesAsync();
 
         return Ok(comentario);
