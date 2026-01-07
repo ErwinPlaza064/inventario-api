@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -35,7 +36,14 @@ else
 builder.Services.AddDbContext<InventarioDbContext>(options =>
     options.UseMySql(connectionString, new MySqlServerVersion(new Version(8, 0, 33))));
 
-builder.Services.AddControllers(); 
+// Configurar JSON para ignorar ciclos de referencia
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+        options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
+    });
+
 builder.Services.AddOpenApi();
 
 // --- 3. CONFIGURACIÓN JWT ---
@@ -134,7 +142,24 @@ if (app.Environment.IsDevelopment()) {
     app.MapOpenApi();
 }
 
-app.UseCors("PermitirFrontend"); 
+// ⚠️ CORS DEBE IR PRIMERO - antes de cualquier otro middleware
+app.UseCors("PermitirFrontend");
+
+// Middleware global de manejo de errores que preserva CORS
+app.Use(async (context, next) =>
+{
+    try
+    {
+        await next();
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"❌ Error: {ex.Message}");
+        context.Response.StatusCode = 500;
+        context.Response.ContentType = "application/json";
+        await context.Response.WriteAsync($"{{\"error\": \"Error interno del servidor\", \"details\": \"{ex.Message.Replace("\"", "'")}\"}}" );
+    }
+});
 
 app.UseAuthentication();
 app.UseAuthorization();
