@@ -61,9 +61,14 @@ builder.Services.AddAuthentication(x =>
 // --- 4. CONFIGURACIÓN DE CORS ---
 builder.Services.AddCors(options => {
     options.AddPolicy("PermitirFrontend", policy => {
-        policy.AllowAnyOrigin() // Permitir cualquier origen para evitar bloqueos iniciales
+        policy.WithOrigins(
+                "https://inventario-app-amber.vercel.app",
+                "http://localhost:3000",
+                "http://localhost:5173"
+              )
               .AllowAnyMethod()
-              .AllowAnyHeader();
+              .AllowAnyHeader()
+              .AllowCredentials();
     });
 });
 
@@ -96,13 +101,29 @@ using (var scope = app.Services.CreateScope()) {
             "ALTER TABLE Notas ADD COLUMN IF NOT EXISTS Categoria INT NOT NULL DEFAULT 0;",
             "ALTER TABLE Tareas ADD COLUMN IF NOT EXISTS Prioridad INT NOT NULL DEFAULT 1;",
             "ALTER TABLE Notas ADD COLUMN IF NOT EXISTS Prioridad INT NOT NULL DEFAULT 1;",
-            "ALTER TABLE Tareas ADD COLUMN IF NOT EXISTS FechaVencimiento DATETIME;"
+            "ALTER TABLE Tareas ADD COLUMN IF NOT EXISTS FechaVencimiento DATETIME;",
+            // Agregar índice único en Username si no existe
+            "CREATE UNIQUE INDEX IF NOT EXISTS IX_Usuarios_Username ON Usuarios(Username);"
         };
 
         foreach (var sql in migrations)
         {
             try { context.Database.ExecuteSqlRaw(sql); } catch { /* Ignorar errores de migración */ }
         }
+        
+        // Configurar foreign keys con RESTRICT si no existen
+        var foreignKeys = new[] {
+            @"ALTER TABLE Tareas ADD CONSTRAINT FK_Tareas_Usuarios_UsuarioId FOREIGN KEY (UsuarioId) REFERENCES Usuarios(Id) ON DELETE RESTRICT ON UPDATE CASCADE;",
+            @"ALTER TABLE Notas ADD CONSTRAINT FK_Notas_Usuarios_UsuarioId FOREIGN KEY (UsuarioId) REFERENCES Usuarios(Id) ON DELETE RESTRICT ON UPDATE CASCADE;",
+            @"ALTER TABLE Credenciales ADD CONSTRAINT FK_Credenciales_Usuarios_UsuarioId FOREIGN KEY (UsuarioId) REFERENCES Usuarios(Id) ON DELETE RESTRICT ON UPDATE CASCADE;",
+            @"ALTER TABLE Comentarios ADD CONSTRAINT FK_Comentarios_Usuarios_UsuarioId FOREIGN KEY (UsuarioId) REFERENCES Usuarios(Id) ON DELETE RESTRICT ON UPDATE CASCADE;"
+        };
+        
+        foreach (var sql in foreignKeys)
+        {
+            try { context.Database.ExecuteSqlRaw(sql); } catch { /* Ignorar si ya existe */ }
+        }
+        
         Console.WriteLine("✅ Base de datos lista.");
     } catch (Exception ex) {
         Console.WriteLine($"❌ Error BD: {ex.Message}");
