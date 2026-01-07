@@ -48,4 +48,23 @@ public class ActividadesController : ControllerBase
 
         return Ok(actividades);
     }
+
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> DeleteActividad(int id)
+    {
+        var userId = await GetCurrentUserId();
+        
+        var actividad = await _context.Actividades
+            .FirstOrDefaultAsync(a => a.Id == id && a.UsuarioId == userId);
+
+        if (actividad == null)
+        {
+            return NotFound();
+        }
+
+        _context.Actividades.Remove(actividad);
+        await _context.SaveChangesAsync();
+
+        return NoContent();
+    }
 }
