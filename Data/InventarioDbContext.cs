@@ -18,11 +18,24 @@ public class InventarioDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.Entity<Usuario>(entity =>
+        {
+            entity.ToTable("Usuarios");
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Username).IsRequired().HasMaxLength(100);
+            entity.HasIndex(e => e.Username).IsUnique();
+        });
+
         modelBuilder.Entity<Tarea>(entity =>
         {
             entity.ToTable("Tareas");
             entity.HasKey(e => e.Id);
             entity.Property(e => e.Titulo).IsRequired().HasMaxLength(255);
+            
+            entity.HasOne(e => e.Usuario)
+                .WithMany(u => u.Tareas)
+                .HasForeignKey(e => e.UsuarioId)
+                .OnDelete(DeleteBehavior.Restrict);
         });
 
         modelBuilder.Entity<Nota>(entity =>
@@ -30,6 +43,11 @@ public class InventarioDbContext : DbContext
             entity.ToTable("Notas");
             entity.HasKey(e => e.Id);
             entity.Property(e => e.Titulo).IsRequired().HasMaxLength(255);
+            
+            entity.HasOne(e => e.Usuario)
+                .WithMany(u => u.Notas)
+                .HasForeignKey(e => e.UsuarioId)
+                .OnDelete(DeleteBehavior.Restrict);
         });
 
         modelBuilder.Entity<Credencial>(entity =>
@@ -38,6 +56,11 @@ public class InventarioDbContext : DbContext
             entity.HasKey(e => e.Id);
             entity.Property(e => e.Titulo).IsRequired().HasMaxLength(255);
             entity.Property(e => e.Valor).IsRequired();
+            
+            entity.HasOne(e => e.UsuarioNavegacion)
+                .WithMany(u => u.Credenciales)
+                .HasForeignKey(e => e.UsuarioId)
+                .OnDelete(DeleteBehavior.Restrict);
         });
 
         modelBuilder.Entity<Comentario>(entity =>
@@ -45,6 +68,11 @@ public class InventarioDbContext : DbContext
             entity.ToTable("Comentarios");
             entity.HasKey(e => e.Id);
             entity.Property(e => e.Contenido).IsRequired();
+            
+            entity.HasOne(e => e.Usuario)
+                .WithMany(u => u.Comentarios)
+                .HasForeignKey(e => e.UsuarioId)
+                .OnDelete(DeleteBehavior.Restrict);
         });
 
         modelBuilder.Entity<Actividad>(entity =>

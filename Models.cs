@@ -35,6 +35,7 @@ public class Tarea
     public DateTime? FechaVencimiento { get; set; }
     public DateTime FechaCreacion { get; set; } = DateTime.UtcNow;
     public int UsuarioId { get; set; }
+    public Usuario? Usuario { get; set; }
 }
 
 public class Nota
@@ -46,6 +47,7 @@ public class Nota
     public TaskCategory Categoria { get; set; } = TaskCategory.Documentacion;
     public DateTime FechaCreacion { get; set; } = DateTime.UtcNow;
     public int UsuarioId { get; set; }
+    public Usuario? Usuario { get; set; }
 }
 
 public class Credencial
@@ -57,6 +59,7 @@ public class Credencial
     public string? Categoria { get; set; }            // Ej: "General", "WiFi", etc.
     public DateTime FechaCreacion { get; set; } = DateTime.UtcNow;
     public int UsuarioId { get; set; }
+    public Usuario? UsuarioNavegacion { get; set; }  // Renombrado para evitar conflicto con Usuario string
 }
 
 public class Usuario
@@ -65,6 +68,12 @@ public class Usuario
     public string Username { get; set; } = string.Empty;
     public string PasswordHash { get; set; } = string.Empty;
     public string Rol { get; set; } = "User"; // Admin o User
+    
+    // Propiedades de navegación
+    public ICollection<Tarea> Tareas { get; set; } = new List<Tarea>();
+    public ICollection<Nota> Notas { get; set; } = new List<Nota>();
+    public ICollection<Credencial> Credenciales { get; set; } = new List<Credencial>();
+    public ICollection<Comentario> Comentarios { get; set; } = new List<Comentario>();
 }
 
 public class Comentario
@@ -74,6 +83,7 @@ public class Comentario
     public string Contenido { get; set; } = string.Empty;
     public DateTime FechaCreacion { get; set; } = DateTime.UtcNow;
     public int UsuarioId { get; set; }
+    public Usuario? Usuario { get; set; }
 }
 
 public enum TipoActividad
