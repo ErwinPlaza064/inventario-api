@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "Su54tHBXQgM=",
+  "dgSpecHash": "N42U0Wmrfrk=",
   "success": true,
-  "projectFilePath": "C:\\Inventario-app\\backend\\InventarioApi.csproj",
+  "projectFilePath": "C:\\xampp\\htdocs\\Inventario-app\\backend\\InventarioApi.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Erwin.Martinez\\.nuget\\packages\\bcrypt.net-next\\4.0.3\\bcrypt.net-next.4.0.3.nupkg.sha512",
     "C:\\Users\\Erwin.Martinez\\.nuget\\packages\\microsoft.aspnetcore.authentication.jwtbearer\\10.0.1\\microsoft.aspnetcore.authentication.jwtbearer.10.0.1.nupkg.sha512",

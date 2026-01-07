@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Inventario-app\\backend\\InventarioApi.csproj": {}
+    "C:\\xampp\\htdocs\\Inventario-app\\backend\\InventarioApi.csproj": {}
   },
   "projects": {
-    "C:\\Inventario-app\\backend\\InventarioApi.csproj": {
+    "C:\\xampp\\htdocs\\Inventario-app\\backend\\InventarioApi.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Inventario-app\\backend\\InventarioApi.csproj",
+        "projectUniqueName": "C:\\xampp\\htdocs\\Inventario-app\\backend\\InventarioApi.csproj",
         "projectName": "InventarioApi",
-        "projectPath": "C:\\Inventario-app\\backend\\InventarioApi.csproj",
+        "projectPath": "C:\\xampp\\htdocs\\Inventario-app\\backend\\InventarioApi.csproj",
         "packagesPath": "C:\\Users\\Erwin.Martinez\\.nuget\\packages\\",
-        "outputPath": "C:\\Inventario-app\\backend\\obj\\",
+        "outputPath": "C:\\xampp\\htdocs\\Inventario-app\\backend\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\Erwin.Martinez\\AppData\\Roaming\\NuGet\\NuGet.Config"
