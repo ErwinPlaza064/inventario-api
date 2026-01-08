@@ -17,13 +17,17 @@ var mysqlHost = Environment.GetEnvironmentVariable("MYSQLHOST");
 
 if (!string.IsNullOrEmpty(mysqlHost))
 {
-    // Si usas variables separadas (como en Railway)
+    // Si usas variables separadas (como en Railway o Aiven)
     var mysqlPort = Environment.GetEnvironmentVariable("MYSQLPORT") ?? "3306";
     var mysqlUser = Environment.GetEnvironmentVariable("MYSQLUSER");
     var mysqlPass = Environment.GetEnvironmentVariable("MYSQLPASSWORD");
     var mysqlDb = Environment.GetEnvironmentVariable("MYSQLDATABASE");
     
-    connectionString = $"Server={mysqlHost};Port={mysqlPort};User={mysqlUser};Password={mysqlPass};Database={mysqlDb};CharSet=utf8mb4;";
+    // Logging para diagnóstico
+    Console.WriteLine($"🔧 Conectando a MySQL: Host={mysqlHost}, Port={mysqlPort}, User={mysqlUser}, Database={mysqlDb}");
+    
+    // SslMode=Required es necesario para Aiven
+    connectionString = $"Server={mysqlHost};Port={mysqlPort};User={mysqlUser};Password={mysqlPass};Database={mysqlDb};CharSet=utf8mb4;SslMode=Required;";
 }
 else
 {
@@ -31,6 +35,7 @@ else
     connectionString = Environment.GetEnvironmentVariable("CONNECTION_STRING") 
                        ?? builder.Configuration.GetConnectionString("DefaultConnection") 
                        ?? "";
+    Console.WriteLine($"🔧 Usando CONNECTION_STRING directa");
 }
 
 builder.Services.AddDbContext<InventarioDbContext>(options =>
