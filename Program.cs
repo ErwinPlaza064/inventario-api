@@ -34,7 +34,11 @@ else
 }
 
 builder.Services.AddDbContext<InventarioDbContext>(options =>
-    options.UseMySql(connectionString, new MySqlServerVersion(new Version(8, 0, 33))));
+    options.UseMySql(connectionString, new MySqlServerVersion(new Version(8, 0, 33)),
+        mySqlOptions => mySqlOptions.EnableRetryOnFailure(
+            maxRetryCount: 5,
+            maxRetryDelay: TimeSpan.FromSeconds(10),
+            errorNumbersToAdd: null)));
 
 // Configurar JSON para ignorar ciclos de referencia
 builder.Services.AddControllers()
