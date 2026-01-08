@@ -26,8 +26,8 @@ if (!string.IsNullOrEmpty(mysqlHost))
     // Logging para diagnóstico
     Console.WriteLine($"🔧 Conectando a MySQL: Host={mysqlHost}, Port={mysqlPort}, User={mysqlUser}, Database={mysqlDb}");
     
-    // SslMode=Required es necesario para Aiven
-    connectionString = $"Server={mysqlHost};Port={mysqlPort};User={mysqlUser};Password={mysqlPass};Database={mysqlDb};CharSet=utf8mb4;SslMode=Required;";
+    // Configuración completa para Aiven MySQL
+    connectionString = $"Server={mysqlHost};Port={mysqlPort};User={mysqlUser};Password={mysqlPass};Database={mysqlDb};CharSet=utf8mb4;SslMode=Required;AllowPublicKeyRetrieval=true;ConnectionTimeout=30;";
 }
 else
 {
